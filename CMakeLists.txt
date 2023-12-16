@@ -5,12 +5,12 @@ project("Meta Words")
 add_subdirectory(extern)
 
 # library
-add_library(meta_words STATIC
+add_library(meta-words STATIC
     include/mam/meta_words/runner.h
     source/whisper.cpp/runner.cpp
 )
 
-target_link_libraries(meta_words
+target_link_libraries(meta-words
     PRIVATE
         tiny-process-library
         fast-cpp-csv-parser
@@ -19,40 +19,40 @@ target_link_libraries(meta_words
 if(MSVC)
     target_compile_definitions (tiny-process-library 
         PUBLIC 
-        -D_UNICODE -DUNICODE
+            -D_UNICODE -DUNICODE
     )
 endif()
 
 if(WIN32)
-    target_link_libraries(meta_words
+    target_link_libraries(meta-words
         PRIVATE
             string-convert
     )
 endif()
 
-target_include_directories(meta_words
+target_include_directories(meta-words
     PUBLIC
         include
     PRIVATE
         source
 )
 
-target_compile_features(meta_words 
+target_compile_features(meta-words
     PRIVATE 
         cxx_std_17
 )
 
 # executable
-add_executable(meta_words-app
+add_executable(meta-words-app
     source/main.cpp
 )
 
-target_link_libraries(meta_words-app
+target_link_libraries(meta-words-app
     PRIVATE
-        meta_words
+        meta-words
 )
 
-target_compile_features(meta_words-app
+target_compile_features(meta-words-app
     PRIVATE 
         cxx_std_17
 )
