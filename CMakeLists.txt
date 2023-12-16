@@ -16,6 +16,20 @@ target_link_libraries(meta_words
         fast-cpp-csv-parser
 )
 
+if(MSVC)
+    target_compile_definitions (tiny-process-library 
+        PUBLIC 
+        -D_UNICODE -DUNICODE
+    )
+endif()
+
+if(WIN32)
+    target_link_libraries(meta_words
+        PRIVATE
+            string-convert
+    )
+endif()
+
 target_include_directories(meta_words
     PUBLIC
         include

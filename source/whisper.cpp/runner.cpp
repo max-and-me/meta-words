@@ -1,6 +1,7 @@
 // Copyright Max & Me 2023
 
 #include "mam/meta_words/runner.h"
+#include "mam/string-convert/string-convert.h"
 #include "csv.h"
 #include "process.hpp"
 #include <string>
@@ -37,15 +38,22 @@ bool run_whisper_cpp(const Command& cmd, FnProgress& fn_progress)
         error += StringType(bytes, n);
     };
 
+#ifndef _WIN32
     // Working directory is not needed here actually (?)
     const char* kPath = "/";
-
-#ifndef _WIN32
     TinyProcessLib::Process process(build_command(cmd), kPath, read_stdout,
                                     read_stderr, true);
 
     return process.get_exit_status() == 0;
+#else
+    // Working directory is not needed here actually (?)
+    const auto kPath = L"/";
+    const auto command = build_command(cmd);
+    const auto wcommand = str_conv::string_to_wide_string(command);
+    TinyProcessLib::Process process(wcommand, kPath, read_stdout,
+                                    read_stderr, true);
 
+    return process.get_exit_status() == 0;
 #endif
 
     return false;
