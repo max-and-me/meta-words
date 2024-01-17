@@ -26,7 +26,7 @@ endif()
 if(WIN32)
     target_link_libraries(meta-words
         PRIVATE
-            string-convert
+            utf-8-everywhere
     )
 endif()
 

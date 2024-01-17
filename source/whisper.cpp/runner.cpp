@@ -51,7 +51,7 @@ bool run_whisper_cpp(const Command& cmd, FnProgress& fn_progress)
     // Working directory is not needed here actually (?)
     const auto kPath    = L"/";
     const auto command  = build_command(cmd);
-    const auto wcommand = str_conv::string_to_wide_string(command);
+    const auto wcommand = utf_8_everywhere::convert(command);
     TinyProcessLib::Process process(wcommand, kPath, read_stdout, read_stderr,
                                     true);
 
