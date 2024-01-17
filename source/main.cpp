@@ -21,7 +21,7 @@ void run_sync(Command& cmd)
 {
     std::cout << "Run sync..." << '\n';
 
-    FnProgress fn_progress = [](ProgressValue val) { double tmp = val; };
+    FnProgress fn_progress = [](ProgressValue val) { ProgressValue tmp = val; };
 
     print_result(run(cmd, fn_progress));
 }
@@ -32,7 +32,7 @@ void run_async(Command& cmd)
     std::cout << "Run async..." << '\n';
 
     std::future<MetaWords> future_handle = std::async([&]() {
-        FnProgress fn_progress = [](ProgressValue val) { double tmp = val; };
+        FnProgress fn_progress = [](ProgressValue val) { ProgressValue tmp = val; };
 
         return run(cmd, fn_progress);
     });
@@ -58,7 +58,7 @@ int main()
 {
     // whisper.cpp executable
     const PathType executable =
-        "/mnt/veracrypt2/Developer/github/whisper_test/build/bin/"
+        "/Users/max/Documents/Code/vst-gpt/build_whisper/bin/"
         "main";
     //  The whisper.cpp library takes the audio file and writes the result
     //  of its analysis into a CSV file. The file is named like the audio
@@ -67,11 +67,9 @@ int main()
     const Options options         = {"-ocsv"};
     const OneValArgs one_val_args = {
         // model file resp. binary
-        {"-m", "/mnt/veracrypt2/Developer/github/whisper_test/whisper.cpp/"
-               "models/ggml-base.en.bin"},
+        {"-m", "/Users/max/Documents/Code/vst-gpt/whisper.cpp/models/ggml-base.en.bin"},
         // audio file to analyse
-        {"-f", "/mnt/veracrypt2/Developer/github/"
-               "whisper_test/whisper.cpp/samples/jfk.wav"},
+        {"-f", "/Users/max/Desktop/max.wav"},
         // maximum segment length in characters: "1" mains one word
         {"-ml", "1"}};
 
