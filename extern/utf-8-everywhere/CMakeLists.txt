@@ -5,7 +5,7 @@ include(FetchContent)
 FetchContent_Declare(
     utf-8-everywhere
     GIT_REPOSITORY https://github.com/max-and-me/utf-8-everywhere.git
-    GIT_TAG 51e8e1368d9c10d3700ef3d292e94bf85a994af0
+    GIT_TAG a8990824a724fe9dc1284f2c9305d00f5c84ff72
 )
 
 FetchContent_MakeAvailable(utf-8-everywhere)
