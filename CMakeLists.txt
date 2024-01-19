@@ -16,6 +16,8 @@ target_link_libraries(meta-words
         fast-cpp-csv-parser
 )
 
+add_dependencies(meta-words main)
+
 if(MSVC)
     target_compile_definitions (tiny-process-library 
         PUBLIC 
@@ -44,7 +46,7 @@ target_compile_features(meta-words
 
 # executable
 add_executable(meta-words-app
-    source/main.cpp
+    test/main.cpp
 )
 
 target_link_libraries(meta-words-app
