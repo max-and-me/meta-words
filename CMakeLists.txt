@@ -45,7 +45,7 @@ target_compile_features(meta-words
 )
 
 # executable
-add_executable(meta-words-app
+add_executable(meta-words-app MACOSX_BUNDLE
     test/main.cpp
 )
 
@@ -65,3 +65,20 @@ set_property(
     PROPERTY
         POSITION_INDEPENDENT_CODE ON
 )
+
+if(APPLE)
+    set(RESOURCE_FILES
+        ${whipser.cpp_SOURCE_DIR}/ggml-metal.metal
+    )
+
+    target_source(meta-words-app
+        PRIVATE
+            ${RESOURCE_FILES}
+    )
+
+    set_target_properties(meta-words-app
+        PROPERTIES
+            RESOURCE
+                ${RESOURCE_FILES}
+    )
+endif() 
