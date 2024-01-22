@@ -24,6 +24,28 @@ StringType build_command(const Command& cmd)
 }
 
 //--------------------------------------------------------------------
+StringType get_whisper_bin_path (const StringType& executable)
+{
+    std::string string = executable;
+    std::vector<std::string> tokens;
+    std::string delimiter = "/";
+    std::string token;
+    size_t pos = 0;
+    while ((pos = string.find(delimiter)) != std::string::npos) {
+        token = string.substr(0, pos);
+        tokens.push_back(token);
+        string.erase(0, pos + delimiter.length());
+    }
+    string.clear();
+    
+    for (const auto& str : tokens)
+        if (str.empty() == false)
+            string = string + "/" + str;
+    
+    return string;
+}
+
+//--------------------------------------------------------------------
 bool run_whisper_cpp(const Command& cmd, FnProgress& fn_progress)
 {
     // callbacks for stdout an stderr
@@ -41,10 +63,8 @@ bool run_whisper_cpp(const Command& cmd, FnProgress& fn_progress)
     };
 
 #ifndef _WIN32
-    // Working directory is not needed here actually (?)
-    const char* kPath = "/";
-    TinyProcessLib::Process process(build_command(cmd), kPath, read_stdout,
-                                    read_stderr, true);
+    std::string binary_path = get_whisper_bin_path(cmd.executable);
+    TinyProcessLib::Process process(build_command(cmd), binary_path.c_str(), read_stdout, read_stderr, true);
 
     return process.get_exit_status() == 0;
 #else
