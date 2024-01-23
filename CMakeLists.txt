@@ -4,8 +4,6 @@ project("Meta Words")
 
 add_subdirectory(extern)
 
-set(whipser.cpp_SOURCE_DIR "/Users/max/Documents/Code/vst-gpt/build_whisper/bin")
-
 # library
 add_library(meta-words STATIC
     include/mam/meta_words/runner.h
@@ -70,7 +68,7 @@ set_property(
 
 if(APPLE)
     set(RESOURCE_FILES
-        ${whipser.cpp_SOURCE_DIR}/ggml-metal.metal
+        ${whisper.cpp_SOURCE_DIR}/ggml-metal.metal
     )
 
     target_sources(meta-words-app
