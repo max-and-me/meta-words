@@ -2,6 +2,7 @@
 // Copyright Max & Me 2024
 //--------------------------------------------------------------------
 
+#pragma once
 
 #include "meta_word.h"
 #include <functional>
