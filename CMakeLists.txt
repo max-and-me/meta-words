@@ -59,6 +59,13 @@ target_compile_features(meta-words-app
         cxx_std_17
 )
 
+target_compile_definitions(meta-words-app
+    PRIVATE
+        MAM_WHISPER_CPP_MODEL_DOWNLOAD_DIR="${MAM_WHISPER_CPP_MODEL_DOWNLOAD_DIR}"
+        MAM_WHISPER_CPP_EXECUTABLE="$<TARGET_FILE:main>"
+        MAM_WHISPER_CPP_AUDIO_SAMPLES_DIR="${whisper.cpp_SOURCE_DIR}/samples"
+)
+
 set_property(
     TARGET
         tiny-process-library

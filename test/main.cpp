@@ -34,7 +34,9 @@ void run_async(Command& cmd)
     std::cout << "Run async..." << '\n';
 
     std::future<MetaWords> future_handle = std::async([&]() {
-        FnProgress fn_progress = [](ProgressValue val) { ProgressValue tmp = val; };
+        FnProgress fn_progress = [](ProgressValue val) {
+            ProgressValue tmp = val;
+        };
 
         return run(cmd, fn_progress);
     });
@@ -59,9 +61,7 @@ void run_async(Command& cmd)
 int main()
 {
     // whisper.cpp executable
-    const PathType executable =
-        "/Users/max/Documents/Code/vst-gpt/build_whisper/bin/"
-        "main";
+    const PathType executable = MAM_WHISPER_CPP_EXECUTABLE;
     //  The whisper.cpp library takes the audio file and writes the result
     //  of its analysis into a CSV file. The file is named like the audio
     //  file and by prepending ".csv" e.g. my_speech.wav ->
@@ -69,9 +69,9 @@ int main()
     const Options options         = {"-ocsv"};
     const OneValArgs one_val_args = {
         // model file resp. binary
-        {"-m", "/Users/max/Documents/Code/vst-gpt/whisper.cpp/models/ggml-base.en.bin"},
+        {"-m", MAM_WHISPER_CPP_MODEL_DOWNLOAD_DIR "/ggml-base.en.bin"},
         // audio file to analyse
-        {"-f", "/Users/max/Desktop/max.wav"},
+        {"-f", MAM_WHISPER_CPP_AUDIO_SAMPLES_DIR "/jfk.wav"},
         // maximum segment length in characters: "1" mains one word
         {"-ml", "1"}};
 
