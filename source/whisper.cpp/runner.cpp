@@ -8,6 +8,7 @@
 #endif
 #include "csv.h"
 #include "process.hpp"
+#include <filesystem>
 #include <string>
 
 namespace mam::meta_words {
@@ -26,24 +27,25 @@ StringType build_command(const Command& cmd)
 }
 
 //--------------------------------------------------------------------
-StringType get_whisper_bin_path (const StringType& executable)
+StringType get_whisper_bin_path(const StringType& executable)
 {
     std::string string = executable;
     std::vector<std::string> tokens;
     std::string delimiter = "/";
     std::string token;
     size_t pos = 0;
-    while ((pos = string.find(delimiter)) != std::string::npos) {
+    while ((pos = string.find(delimiter)) != std::string::npos)
+    {
         token = string.substr(0, pos);
         tokens.push_back(token);
         string.erase(0, pos + delimiter.length());
     }
     string.clear();
-    
+
     for (const auto& str : tokens)
         if (str.empty() == false)
             string = string + "/" + str;
-    
+
     return string;
 }
 
@@ -66,7 +68,8 @@ bool run_whisper_cpp(const Command& cmd, FnProgress& fn_progress)
 
 #ifndef _WIN32
     std::string binary_path = get_whisper_bin_path(cmd.executable);
-    TinyProcessLib::Process process(build_command(cmd), binary_path.c_str(), read_stdout, read_stderr, true);
+    TinyProcessLib::Process process(build_command(cmd), binary_path.c_str(),
+                                    read_stdout, read_stderr, true);
 
     return process.get_exit_status() == 0;
 #else
@@ -115,17 +118,32 @@ PathType build_csv_file_path(OneValArgs& args)
 }
 
 //--------------------------------------------------------------------
+bool remove_if_exists(PathType file)
+{
+    // TODO: Add proper error handling here!
+    std::error_code error_code;
+    if (!std::filesystem::remove(file, error_code))
+        return false;
+
+    return true;
+}
+
+//--------------------------------------------------------------------
 //  Public Interface
 //--------------------------------------------------------------------
 const MetaWords run(const Command& cmd, FnProgress& fn_progress)
 {
     fn_progress(0.);
 
+    // whisper.cpp writes the result into a csv file. Remove this first if it
+    // exists already.
+    const PathType& csv_file_path = build_csv_file_path(cmd.one_value_args);
+    remove_if_exists(csv_file_path);
+
     if (!run_whisper_cpp(cmd, fn_progress))
         return {};
 
-    const PathType& csv_file_path = build_csv_file_path(cmd.one_value_args);
-    const MetaWords meta_words    = parse_csv_file(csv_file_path);
+    const MetaWords meta_words = parse_csv_file(csv_file_path);
 
     fn_progress(1.);
 
