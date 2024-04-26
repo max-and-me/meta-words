@@ -18,7 +18,8 @@ using PathType      = const StringType;
 using Options       = const std::vector<StringType>;
 using OneValArgs    = const std::unordered_map<StringType, StringType>;
 using ProgressValue = const double;
-using FnProgress    = const std::function<void(ProgressValue)>;
+using FuncProgress  = const std::function<void(ProgressValue)>;
+using FuncCancel    = const std::function<bool()>;
 
 struct Command
 {
@@ -27,7 +28,8 @@ struct Command
     OneValArgs one_value_args;
 };
 
-const MetaWords run(const Command& cmd, FnProgress& fn_progress);
+const MetaWords
+run(const Command& cmd, FuncProgress&& progress_func, FuncCancel&& cancel_func);
 
 //--------------------------------------------------------------------
 } // namespace mam::meta_words

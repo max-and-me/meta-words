@@ -50,15 +50,17 @@ StringType get_whisper_bin_path(const StringType& executable)
 }
 
 //--------------------------------------------------------------------
-bool run_whisper_cpp(const Command& cmd, FnProgress& fn_progress)
+bool run_whisper_cpp(const Command& cmd,
+                     FuncProgress&& progress_func,
+                     FuncCancel&& cancel_func)
 {
     // callbacks for stdout an stderr
     StringType output;
     StringType error;
 
-    auto read_stdout = [&output, &fn_progress](const char* bytes, size_t n) {
+    auto read_stdout = [&output, &progress_func](const char* bytes, size_t n) {
         // TODO: not working yet :-/
-        // fn_progress(0.);
+        // progress_func(0.);
         output += StringType(bytes, n);
     };
 
@@ -70,8 +72,6 @@ bool run_whisper_cpp(const Command& cmd, FnProgress& fn_progress)
     std::string binary_path = get_whisper_bin_path(cmd.executable);
     TinyProcessLib::Process process(build_command(cmd), binary_path.c_str(),
                                     read_stdout, read_stderr, true);
-
-    return process.get_exit_status() == 0;
 #else
     // Working directory is not needed here actually (?)
     const auto kPath    = L"/";
@@ -79,9 +79,25 @@ bool run_whisper_cpp(const Command& cmd, FnProgress& fn_progress)
     const auto wcommand = utf_8_everywhere::convert(command);
     TinyProcessLib::Process process(wcommand, kPath, read_stdout, read_stderr,
                                     true);
-
-    return process.get_exit_status() == 0;
 #endif
+    progress_func(0.);
+
+    while (true)
+    {
+        int exit_status;
+        if (process.try_get_exit_status(exit_status))
+        {
+            return exit_status == 0;
+        }
+
+        if (cancel_func())
+        {
+            process.kill();
+            break;
+        }
+    }
+
+    progress_func(1.);
 
     return false;
 }
@@ -131,21 +147,18 @@ bool remove_if_exists(PathType file)
 //--------------------------------------------------------------------
 //  Public Interface
 //--------------------------------------------------------------------
-const MetaWords run(const Command& cmd, FnProgress& fn_progress)
+const MetaWords
+run(const Command& cmd, FuncProgress&& progress_func, FuncCancel&& cancel_func)
 {
-    fn_progress(0.);
-
     // whisper.cpp writes the result into a csv file. Remove this first if it
     // exists already.
     const PathType& csv_file_path = build_csv_file_path(cmd.one_value_args);
     remove_if_exists(csv_file_path);
 
-    if (!run_whisper_cpp(cmd, fn_progress))
+    if (!run_whisper_cpp(cmd, std::move(progress_func), std::move(cancel_func)))
         return {};
 
     const MetaWords meta_words = parse_csv_file(csv_file_path);
-
-    fn_progress(1.);
 
     return meta_words;
 }
