@@ -10,6 +10,7 @@
 #include "process.hpp"
 #include <filesystem>
 #include <string>
+#include <thread>
 
 namespace mam::meta_words {
 
@@ -95,6 +96,9 @@ bool run_whisper_cpp(const Command& cmd,
             process.kill();
             break;
         }
+
+        // Wait some time before going on
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
     progress_func(1.);
