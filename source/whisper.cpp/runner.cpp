@@ -4,7 +4,7 @@
 
 #include "mam/meta_words/runner.h"
 #if _WIN32
-#include "mam/utf_8_everywhere/convert.h"
+#include "utf_8_everywhere/convert.h"
 #endif
 #include "csv.h"
 #include "process.hpp"
