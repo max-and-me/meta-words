@@ -14,15 +14,28 @@
 
 namespace mam::meta_words {
 
+//------------------------------------------------------------------------
+#if defined(WIN32)
+constexpr auto QUOTE = "\"";
+#else
+constexpr auto QUOTE = "'";
+#endif
+
+//------------------------------------------------------------------------
+auto put_in_quotes(const StringType& in) -> StringType
+{
+    return QUOTE + in + QUOTE;
+}
+
 //--------------------------------------------------------------------
 StringType build_command(const Command& cmd)
 {
-    StringType command = cmd.executable;
+    StringType command = put_in_quotes(cmd.executable);
     for (const auto& opt : cmd.options)
         command += " " + opt;
 
     for (const auto& arg : cmd.one_value_args)
-        command += " " + arg.first + " " + arg.second;
+        command += " " + arg.first + " " + put_in_quotes(arg.second);
 
     return command;
 }
