@@ -5,7 +5,7 @@ include(FetchContent)
 FetchContent_Declare(
     whisper.cpp
     GIT_REPOSITORY https://github.com/ggerganov/whisper.cpp.git
-    GIT_TAG v1.5.5
+    GIT_TAG v1.6.2
 )
 
 option(WHISPER_BUILD_EXAMPLES "whisper: build examples" ON)
