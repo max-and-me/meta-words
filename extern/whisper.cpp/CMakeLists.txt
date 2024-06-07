@@ -15,6 +15,13 @@ FetchContent_MakeAvailable(whisper.cpp)
 # Cache the models download directory
 set(MAM_WHISPER_CPP_MODEL_DOWNLOAD_DIR "${PROJECT_BINARY_DIR}/whisper.cpp/models" CACHE PATH "MAM whisper.cpp models models diretory")
 
+# Keep the source dir for later usage
+# message(FATAL_ERROR "[MAM] whisper.cpp_SOURCE_DIR: ${whisper.cpp_SOURCE_DIR}")
+set_target_properties(whisper
+    PROPERTIES
+        whisper_SOURCE_DIR ${whisper.cpp_SOURCE_DIR}
+)
+
 # Only download if not exist already
 set(MAM_WHISPER_CPP_MODEL_FILE_NAME "ggml-base.en.bin")
 if(EXISTS "${MAM_WHISPER_CPP_MODEL_DOWNLOAD_DIR}/${MAM_WHISPER_CPP_MODEL_FILE_NAME}")
