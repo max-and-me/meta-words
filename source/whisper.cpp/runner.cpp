@@ -130,10 +130,10 @@ const MetaWords parse_csv_file(PathType csv_file)
     in.read_header(io::ignore_extra_column, "start", "end", "text");
     double start = 0.;
     double end   = 0.;
-    StringType text;
-    while (in.read_row(start, end, text))
+    StringType value;
+    while (in.read_row(start, end, value))
     {
-        meta_words.push_back({start, end - start, text});
+        meta_words.push_back({start, end - start, value});
     }
 
     return meta_words;

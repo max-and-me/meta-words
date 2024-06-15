@@ -14,7 +14,7 @@ void print_result(const MetaWords& meta_words)
 {
     for (auto& word : meta_words)
     {
-        std::cout << word.word;
+        std::cout << word.value;
     }
 }
 

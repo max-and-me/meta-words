@@ -12,11 +12,11 @@ namespace mam::meta_words {
 //--------------------------------------------------------------------
 struct MetaWord
 {
-    using Word = std::string;
+    using StringType = std::string;
 
     double begin    = 0.;
     double duration = 0.;
-    Word word;
+    StringType value;
 };
 
 using MetaWords = std::vector<MetaWord>;
