@@ -6,6 +6,7 @@ add_subdirectory(extern)
 
 # library
 add_library(meta-words STATIC
+    include/mam/meta_words/meta_word.h
     include/mam/meta_words/runner.h
     source/whisper.cpp/runner.cpp
 )
