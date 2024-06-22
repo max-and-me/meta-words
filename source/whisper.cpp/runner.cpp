@@ -107,7 +107,6 @@ bool run_whisper_cpp(const Command& cmd,
         if (cancel_func())
         {
             process.kill();
-            break;
         }
 
         // Wait some time before going on
