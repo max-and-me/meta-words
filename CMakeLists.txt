@@ -12,9 +12,11 @@ add_library(meta-words STATIC
 )
 
 target_link_libraries(meta-words
+    PUBLIC 
+        tl::expected
     PRIVATE
-        tiny-process-library
         fast-cpp-csv-parser
+        tiny-process-library
 )
 
 add_dependencies(meta-words main)

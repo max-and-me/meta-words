@@ -9,6 +9,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "tl/expected.hpp"
 
 namespace mam::meta_words {
 
@@ -20,6 +21,7 @@ using OneValArgs    = const std::unordered_map<StringType, StringType>;
 using ProgressValue = const double;
 using FuncProgress  = const std::function<void(ProgressValue)>;
 using FuncCancel    = const std::function<bool()>;
+using ExpectedMetaWords = tl::expected<MetaWords, int>;
 
 struct Command
 {
@@ -28,7 +30,7 @@ struct Command
     OneValArgs one_value_args;
 };
 
-const MetaWords
+const ExpectedMetaWords
 run(const Command& cmd, FuncProgress&& progress_func, FuncCancel&& cancel_func);
 
 //--------------------------------------------------------------------

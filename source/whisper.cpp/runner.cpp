@@ -163,7 +163,7 @@ bool remove_if_exists(PathType file)
 //--------------------------------------------------------------------
 //  Public Interface
 //--------------------------------------------------------------------
-const MetaWords
+const ExpectedMetaWords
 run(const Command& cmd, FuncProgress&& progress_func, FuncCancel&& cancel_func)
 {
     // whisper.cpp writes the result into a csv file. Remove this first if it

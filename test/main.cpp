@@ -10,9 +10,9 @@
 using namespace mam::meta_words;
 
 //-----------------------------------------------------------------------------
-void print_result(const MetaWords& meta_words)
+void print_result(const ExpectedMetaWords& meta_words)
 {
-    for (auto& word : meta_words)
+    for (auto& word : meta_words.value())
     {
         std::cout << word.value;
     }
@@ -38,7 +38,7 @@ void run_async(Command& cmd)
 
     std::atomic_bool is_cancel = false;
 
-    std::future<MetaWords> future_handle = std::async([&]() {
+    std::future<ExpectedMetaWords> future_handle = std::async([&]() {
         FuncProgress progress_func = [](ProgressValue val) {
             ProgressValue tmp = val;
         };
