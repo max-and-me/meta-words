@@ -64,10 +64,12 @@ StringType get_whisper_bin_path(const StringType& executable)
 }
 
 //--------------------------------------------------------------------
-bool run_whisper_cpp(const Command& cmd,
+int run_whisper_cpp(const Command& cmd,
                      FuncProgress&& progress_func,
                      FuncCancel&& cancel_func)
 {
+    int exit_status = -1;
+
     // callbacks for stdout an stderr
     StringType output;
     StringType error;
@@ -98,10 +100,9 @@ bool run_whisper_cpp(const Command& cmd,
 
     while (true)
     {
-        int exit_status;
         if (process.try_get_exit_status(exit_status))
         {
-            return exit_status == 0;
+            return exit_status;
         }
 
         if (cancel_func())
@@ -115,7 +116,7 @@ bool run_whisper_cpp(const Command& cmd,
 
     progress_func(1.);
 
-    return false;
+    return exit_status;
 }
 
 //--------------------------------------------------------------------
@@ -171,11 +172,11 @@ run(const Command& cmd, FuncProgress&& progress_func, FuncCancel&& cancel_func)
     const PathType& csv_file_path = build_csv_file_path(cmd.one_value_args);
     remove_if_exists(csv_file_path);
 
-    if (!run_whisper_cpp(cmd, std::move(progress_func), std::move(cancel_func)))
-        return {};
+    const auto error = run_whisper_cpp(cmd, std::move(progress_func), std::move(cancel_func));
+    if (error != 0)
+        return tl::unexpected(error);
 
     const MetaWords meta_words = parse_csv_file(csv_file_path);
-
     return meta_words;
 }
 
