@@ -96,6 +96,11 @@ int run_whisper_cpp(const Command& cmd,
     TinyProcessLib::Process process(wcommand, kPath, read_stdout, read_stderr,
                                     true);
 #endif
+
+    // This is an error, the id must be > 0. 
+    if (process.get_id() == 0)
+        return false;
+
     progress_func(0.);
 
     while (true)
