@@ -26,6 +26,13 @@ if(MSVC)
     )
 endif()
 
+set_property(
+    TARGET
+        tiny-process-library
+    PROPERTY
+        POSITION_INDEPENDENT_CODE ON
+)
+
 if(WIN32)
     target_link_libraries(meta-words
         PRIVATE
@@ -45,48 +52,43 @@ target_compile_features(meta-words
         cxx_std_17
 )
 
-# executable
-add_executable(meta-words-app MACOSX_BUNDLE
-    test/main.cpp
-)
-
-target_link_libraries(meta-words-app
-    PRIVATE
-        meta-words
-)
-
-target_compile_features(meta-words-app
-    PRIVATE 
-        cxx_std_17
-)
-
-target_compile_definitions(meta-words-app
-    PRIVATE
-        MAM_WHISPER_CPP_MODEL_DOWNLOAD_DIR="${MAM_WHISPER_CPP_MODEL_DOWNLOAD_DIR}"
-        MAM_WHISPER_CPP_EXECUTABLE="$<TARGET_FILE:main>"
-        MAM_WHISPER_CPP_AUDIO_SAMPLES_DIR="${whisper.cpp_SOURCE_DIR}/samples"
-)
-
-set_property(
-    TARGET
-        tiny-process-library
-    PROPERTY
-        POSITION_INDEPENDENT_CODE ON
-)
-
-if(APPLE)
-    set(RESOURCE_FILES
-        ${whisper.cpp_SOURCE_DIR}/ggml-metal.metal
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    # executable
+    add_executable(meta-words-app MACOSX_BUNDLE
+        test/main.cpp
     )
 
-    target_sources(meta-words-app
+    target_link_libraries(meta-words-app
         PRIVATE
-            ${RESOURCE_FILES}
+            meta-words
     )
 
-    set_target_properties(meta-words-app
-        PROPERTIES
-            RESOURCE
-                ${RESOURCE_FILES}
+    target_compile_features(meta-words-app
+        PRIVATE 
+            cxx_std_17
     )
-endif() 
+
+    target_compile_definitions(meta-words-app
+        PRIVATE
+            MAM_WHISPER_CPP_MODEL_DOWNLOAD_DIR="${MAM_WHISPER_CPP_MODEL_DOWNLOAD_DIR}"
+            MAM_WHISPER_CPP_EXECUTABLE="$<TARGET_FILE:main>"
+            MAM_WHISPER_CPP_AUDIO_SAMPLES_DIR="${whisper.cpp_SOURCE_DIR}/samples"
+    )
+
+    if(APPLE)
+        set(RESOURCE_FILES
+            ${whisper.cpp_SOURCE_DIR}/ggml-metal.metal
+        )
+
+        target_sources(meta-words-app
+            PRIVATE
+                ${RESOURCE_FILES}
+        )
+
+        set_target_properties(meta-words-app
+            PROPERTIES
+                RESOURCE
+                    ${RESOURCE_FILES}
+        )
+    endif()
+endif()
