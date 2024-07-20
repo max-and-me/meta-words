@@ -9,6 +9,7 @@
 #include "csv.h"
 #include "process.hpp"
 #include <filesystem>
+#include <fstream>
 #include <string>
 #include <thread>
 
@@ -25,6 +26,13 @@ constexpr auto QUOTE = "'";
 auto put_in_quotes(const StringType& in) -> StringType
 {
     return QUOTE + in + QUOTE;
+}
+
+//------------------------------------------------------------------------
+auto is_file_exist(const StringType& fileName) -> bool
+{
+    std::ifstream infile(fileName);
+    return infile.good();
 }
 
 //--------------------------------------------------------------------
@@ -65,8 +73,8 @@ StringType get_whisper_bin_path(const StringType& executable)
 
 //--------------------------------------------------------------------
 int run_whisper_cpp(const Command& cmd,
-                     FuncProgress&& progress_func,
-                     FuncCancel&& cancel_func)
+                    FuncProgress&& progress_func,
+                    FuncCancel&& cancel_func)
 {
     int exit_status = -1;
 
@@ -97,7 +105,7 @@ int run_whisper_cpp(const Command& cmd,
                                     true);
 #endif
 
-    // This is an error, the id must be > 0. 
+    // This is an error, the id must be > 0.
     if (process.get_id() == 0)
         return false;
 
@@ -172,14 +180,31 @@ bool remove_if_exists(PathType file)
 const ExpectedMetaWords
 run(const Command& cmd, FuncProgress&& progress_func, FuncCancel&& cancel_func)
 {
+    // Check executable file exists
+    if (!is_file_exist(cmd.executable))
+        return nonstd::make_unexpected("File does not exist: " +
+                                       cmd.executable);
+
+    // Check model file exists
+    auto iter = cmd.one_value_args.find("-m");
+    if (iter != cmd.one_value_args.end())
+    {
+        if (!is_file_exist(iter->second))
+        {
+            return nonstd::make_unexpected("File does not exist: " +
+                                           iter->second);
+        }
+    }
+
     // whisper.cpp writes the result into a csv file. Remove this first if it
     // exists already.
     const PathType& csv_file_path = build_csv_file_path(cmd.one_value_args);
     remove_if_exists(csv_file_path);
 
-    const auto error = run_whisper_cpp(cmd, std::move(progress_func), std::move(cancel_func));
+    const auto error =
+        run_whisper_cpp(cmd, std::move(progress_func), std::move(cancel_func));
     if (error != 0)
-        return tl::unexpected(error);
+        return nonstd::make_unexpected("Something has gone wrong");
 
     const MetaWords meta_words = parse_csv_file(csv_file_path);
     return meta_words;

@@ -13,7 +13,7 @@ add_library(meta-words STATIC
 
 target_link_libraries(meta-words
     PUBLIC 
-        tl::expected
+        expected-lite
     PRIVATE
         fast-cpp-csv-parser
         tiny-process-library

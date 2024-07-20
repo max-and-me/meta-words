@@ -12,9 +12,16 @@ using namespace mam::meta_words;
 //-----------------------------------------------------------------------------
 void print_result(const ExpectedMetaWords& meta_words)
 {
-    for (auto& word : meta_words.value())
+    if (meta_words.has_value())
     {
-        std::cout << word.value;
+        for (auto& word : meta_words.value())
+        {
+            std::cout << word.value;
+        }
+    }
+    else
+    {
+        std::cout << meta_words.error();
     }
 }
 

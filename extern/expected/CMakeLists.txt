@@ -3,9 +3,9 @@ cmake_minimum_required(VERSION 3.14.0)
 include(FetchContent)
 
 FetchContent_Declare(
-    std-expected
-    GIT_REPOSITORY https://github.com/TartanLlama/expected.git
-    GIT_TAG v1.1.0
+    expected-lite
+    GIT_REPOSITORY https://github.com/martinmoene/expected-lite.git
+    GIT_TAG v0.8.0
 )
 
-FetchContent_MakeAvailable(std-expected)
+FetchContent_MakeAvailable(expected-lite)
