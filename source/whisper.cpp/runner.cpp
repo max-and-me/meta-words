@@ -10,6 +10,7 @@
 #include "process.hpp"
 #include <filesystem>
 #include <fstream>
+#include <optional>
 #include <string>
 #include <thread>
 
@@ -175,15 +176,12 @@ bool remove_if_exists(PathType file)
 }
 
 //--------------------------------------------------------------------
-//  Public Interface
-//--------------------------------------------------------------------
-const ExpectedMetaWords
-run(const Command& cmd, FuncProgress&& progress_func, FuncCancel&& cancel_func)
+using OptionalError = std::optional<StringType>;
+auto check_command(const Command& cmd) -> OptionalError
 {
     // Check executable file exists
     if (!is_file_exist(cmd.executable))
-        return nonstd::make_unexpected("File does not exist: " +
-                                       cmd.executable);
+        return std::make_optional("File does not exist: " + cmd.executable);
 
     // Check model file exists
     auto iter = cmd.one_value_args.find("-m");
@@ -191,10 +189,31 @@ run(const Command& cmd, FuncProgress&& progress_func, FuncCancel&& cancel_func)
     {
         if (!is_file_exist(iter->second))
         {
-            return nonstd::make_unexpected("File does not exist: " +
-                                           iter->second);
+            return std::make_optional("File does not exist: " + iter->second);
         }
     }
+
+    // Check audio file exists
+    iter = cmd.one_value_args.find("-f");
+    if (iter != cmd.one_value_args.end())
+    {
+        if (!is_file_exist(iter->second))
+        {
+            return std::make_optional("File does not exist: " + iter->second);
+        }
+    }
+
+    return std::nullopt;
+}
+
+//--------------------------------------------------------------------
+//  Public Interface
+//--------------------------------------------------------------------
+const ExpectedMetaWords
+run(const Command& cmd, FuncProgress&& progress_func, FuncCancel&& cancel_func)
+{
+    if (auto opt_error = check_command(cmd))
+        return nonstd::make_unexpected(opt_error.value());
 
     // whisper.cpp writes the result into a csv file. Remove this first if it
     // exists already.
