@@ -5,7 +5,7 @@ include(FetchContent)
 FetchContent_Declare(
     expected-lite
     GIT_REPOSITORY https://github.com/martinmoene/expected-lite.git
-    GIT_TAG v0.8.0
+    GIT_TAG v0.9.0
 )
 
 FetchContent_MakeAvailable(expected-lite)
