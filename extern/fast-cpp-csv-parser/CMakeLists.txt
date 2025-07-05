@@ -5,7 +5,7 @@ include(FetchContent)
 FetchContent_Declare(
     fast-cpp-csv-parser
     GIT_REPOSITORY https://github.com/ben-strasser/fast-cpp-csv-parser.git
-    GIT_TAG 758f5665705a38da55322511d5b22fe2679918fe
+    GIT_TAG 574a9fe4d323ba63416877a4a5fe59088d37aa34
 )
 
 FetchContent_MakeAvailable(fast-cpp-csv-parser)
